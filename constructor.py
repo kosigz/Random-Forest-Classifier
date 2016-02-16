@@ -1,5 +1,5 @@
 from math import log
-
+import time
 from model.tree import LabelNode
 from model.tree import DecisionNode
 
@@ -10,6 +10,8 @@ def create_decision_tree(training_data, attributes, target):
     target_labels   = [record[target] for record in training_data]
     default         = most_frequent(target_labels)
 
+    # print training_data
+
     if not training_data or len(attributes) <= 1 or \
     target_labels.count(default) == len(target_labels):
         # either out of attributes to split on or the set has the same
@@ -17,15 +19,16 @@ def create_decision_tree(training_data, attributes, target):
         return LabelNode(default)
 
     else:
+
         # select the best attribute to split on
-        best = choose_best_attribute(data, \
+        best = choose_best_attribute(training_data, \
         [a for a in attributes if a != target], target)
 
         # make a new node
         tree = DecisionNode(best)
 
         # split for discrete variables
-        for val in get_values(data, best):
+        for val in get_values(training_data, best):
             subtree = create_decision_tree(
                 get_examples(training_data, best, val),
                 [attr for attr in attributes if attr != best],
@@ -77,14 +80,3 @@ def get_examples(data, attribute, val):
         if d[attribute] == val:
             result.append(d)
     return result
-
-# TEST ------------------------------------------------------------------------
-data = [{'weather': 'cloudy', 'temp': 'hi', 'result': 'yes'},
-{'weather': 'cloudy', 'temp': 'lo', 'result': 'no'},
-{'weather': 'sunny', 'temp': 'hi', 'result': 'yes'},
-{'weather': 'sunny', 'temp': 'lo', 'result': 'no'},
-{'weather': 'sunny', 'temp': 'hi', 'result': 'no'},
-{'weather': 'cloudy', 'temp': 'hi', 'result': 'yes'}]
-attributes = ['weather', 'temp', 'result']
-target = 'result'
-decision_tree = create_decision_tree(data, attributes, target)
