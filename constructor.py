@@ -1,9 +1,14 @@
 from math import log
-import time
+
 from model.tree import LabelNode
 from model.tree import DecisionNode
 
 # Construction ----------------------------------------------------------------
+# Builds a decision tree from the file given with the specified target attribute.
+def construct_decision_tree_from_file(filename, target):
+    data, attrs = data_from_file(filename)
+    return create_decision_tree(data, attrs, target)
+
 # returns reference to the root of a new decision tree
 def create_decision_tree(training_data, attributes, target):
     training_data   = training_data[:]
