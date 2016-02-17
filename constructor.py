@@ -58,11 +58,15 @@ def choose_best_attribute(data, attributes, target):
     info_gain = {}
     for attr in attributes:
         if attr != target:
-            info_gain[attr] = entropy(data, attr, target)
+            info_gain[attr] = information_gain(data, attr, target)
     # get the lowest entropy
     k = list(info_gain.keys())
     v = list(info_gain.values())
     return k[v.index(min(v))]
+
+def information_gain(data, attr, target):
+    current = entropy(data, attr, target)
+    return current
 
 def entropy(data, attr, target):
     vals = [d[attr] for d in data]
