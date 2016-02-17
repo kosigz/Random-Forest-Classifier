@@ -24,7 +24,6 @@ def create_decision_tree(training_data, attributes, target):
         return LabelNode(default)
 
     else:
-
         # select the best attribute to split on
         best = choose_best_attribute(training_data, \
         [a for a in attributes if a != target], target)
@@ -69,10 +68,10 @@ def information_gain(data, attr, target):
     return current
 
 def entropy(data, attr, target):
-    vals = [d[attr] for d in data]
+    labels = [d[target] for d in data]
     entropy = 0
-    for val in set(vals):
-        proportion = float(vals.count(val)) / len(vals)
+    for label in get_values(data, target):
+        proportion = float(labels.count(label)) / len(labels)
         # print proportion + log(proportion, 2)
         entropy -= proportion * log(proportion, 2)
     return entropy
