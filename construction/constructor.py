@@ -15,21 +15,23 @@ def create_decision_tree(training_data, attributes, target):
     target_labels   = [record[target] for record in training_data]
     default         = most_frequent(target_labels)
 
-    # print training_data
-
-    if not training_data or len(attributes) <= 1 or \
-    target_labels.count(default) == len(target_labels):
+    if not training_data \
+    or target_labels.count(default) == len(target_labels) \
+    or len(attributes) == 0:
         # either out of attributes to split on or the set has the same
         # label, in which case splitting is not possible
-        return LabelNode(default)
+        return LabelNode(default, 0)
+
+    elif len(attributes) == 1:
+        return LabelNode(default, entropy(data, attr, target))
 
     else:
         # select the best attribute to split on
-        best = choose_best_attribute(training_data, \
+        best, entropy = choose_best_attribute(training_data, \
         [a for a in attributes if a != target], target)
 
         # make a new node
-        tree = DecisionNode(best)
+        tree = DecisionNode(best, entropy)
 
         # split for discrete variables
         for val in get_values(training_data, best):
@@ -54,25 +56,20 @@ def most_frequent(values):
     return k[v.index(max(v))]
 
 def choose_best_attribute(data, attributes, target):
-    info_gain = {}
+    entropies = {}
     for attr in attributes:
         if attr != target:
-            info_gain[attr] = information_gain(data, attr, target)
+            entropies[attr] = entropy(data, attr, target)
     # get the lowest entropy
-    k = list(info_gain.keys())
-    v = list(info_gain.values())
-    return k[v.index(min(v))]
-
-def information_gain(data, attr, target):
-    current = entropy(data, attr, target)
-    return current
+    k = list(entropies.keys())
+    v = list(entropies.values())
+    return k[v.index(min(v))], v[v.index(min(v))]
 
 def entropy(data, attr, target):
     labels = [d[target] for d in data]
     entropy = 0
     for label in get_values(data, target):
         proportion = float(labels.count(label)) / len(labels)
-        # print proportion + log(proportion, 2)
         entropy -= proportion * log(proportion, 2)
     return entropy
 
