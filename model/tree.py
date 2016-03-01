@@ -5,11 +5,11 @@ class LabelNode(object):
         self.entropy = entropy
 
 class DecisionNode(object):
-    def __init__(self, attribute, entropy):
+    def __init__(self, attribute, entropy, split_expression=None):
         self.attribute = attribute
         self.subtrees = {}
         self.entropy = entropy
+        self.split_expression = split_expression
 
     def set_subtree(self, val, subtree):
-        self.discrete = True    # TODO make the tree handle continuous valued nodes
         self.subtrees[val] = subtree
