@@ -1,15 +1,14 @@
 from construction.constructor import *
 from construction.data_utility import *
+
 import model.tree
-import classifier
+from classifier.classifier import *
 
 def weather_classifier():
     data, attrs = data_from_file('training/WeatherTraining.csv', ',')
-    # print data
-    # data, attrs = data_from_file('training/HousingTraining.csv', None)
     decision_tree = create_decision_tree(data, attrs, 'play')
     sample_record = {'play': 'yes', 'windy': 'false', 'outlook': 'overcast', 'temperature': '30', 'humidity': 'high'}
-    # return classify(sample_record, decision_tree).label
+    print classify(sample_record, decision_tree)
 
 def housing_classifier():
     data, attrs = data_from_file('training/HousingTraining.csv', None)

@@ -44,7 +44,15 @@ def create_decision_tree(training_data, attributes, target):
                 tree.set_subtree(val, subtree)
         else:
         # split for continous value
-            print "continuous value!"
+            for result in [True, False]:
+                subtree = create_decision_tree(
+                [record for record in training_data if split_expression(record[best]) == result],
+                [attr for attr in attributes if attr != best],
+                target)
+
+                # set the subtree and split expression!
+                tree.set_subtree(result, subtree)
+                tree.split_expression = split_expression
 
         return tree
 
@@ -62,15 +70,19 @@ def most_frequent(values):
 
 def choose_best_attribute(data, attributes, target):
     entropies = {}
+    split_expressions = {}
     for attr in attributes:
         if attr != target and is_discrete(data, attr):
             entropies[attr] = entropy(data, attr, target)
+            split_expressions[attr] = None
         else:
             entropies[attr], split_expression = entropy_for_continuous(data, attr, target)
+            split_expressions[attr] = split_expression
     # get the lowest entropy
     k = list(entropies.keys())
     v = list(entropies.values())
-    return k[v.index(min(v))], v[v.index(min(v))], None
+    s = list(split_expressions.values())
+    return k[v.index(min(v))], v[v.index(min(v))], s[v.index(min(v))]
 
 # should determine if the attribute is discrete or continous, and return the
 # entropy of the best split and the value to split on if applicable
@@ -104,20 +116,16 @@ def entropy_for_continuous(data, attribute, target):
     for i in range(len(data) + 1):
         first_entropy = entropy(data[:i], attribute, target)
         second_entropy = entropy(data[i:], attribute, target)
-        entropies[i] = first_entropy * len(data[i:]) / len(data) \
+        entropies[i] = first_entropy * len(data[:i]) / len(data) \
         + second_entropy * len(data[i:]) / len(data)
     # get the best
     k = list(entropies.keys())
     v = list(entropies.values())
     optimal_split_index, entr = k[v.index(min(v))], v[v.index(min(v))]
-    optimal_split_expression = lambda x: x > data[min(optimal_split_index, len(data) - 1)][attribute]
+    def optimal_split_expression(x):
+        return float(x) > float(data[min(optimal_split_index, len(data) - 1)][attribute])
     return entr, optimal_split_expression
 
 # let's say that all numerial data is continuous for now
 def is_discrete(training_data, attribute):
     return not unicode(training_data[0][attribute], 'utf-8').isnumeric()
-
-# return best split for dict for given attribute given a target
-def best_split(training_data, attribute, target):
-    #
-    print 'a'
