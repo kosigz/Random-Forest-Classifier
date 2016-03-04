@@ -1,5 +1,6 @@
 from construction.constructor import *
 from construction.data_utility import *
+from utilities.visualizer import *
 
 import model.tree
 from classifier.classifier import *
@@ -8,6 +9,7 @@ def weather_classifier():
     data, attrs = data_from_file('training/WeatherTraining.csv', ',')
     decision_tree = create_decision_tree(data, attrs, 'play')
     sample_record = {'play': 'yes', 'windy': 'false', 'outlook': 'overcast', 'temperature': '30', 'humidity': 'high'}
+    print_tree(decision_tree)
     print classify(sample_record, decision_tree)
 
 def housing_classifier():

@@ -5,7 +5,7 @@ from model.tree import LabelNode
 from model.tree import DecisionNode
 
 # Construction ----------------------------------------------------------------
-# Builds a decision tree from the file given with the specified target attribute.
+# Builds a decision tree from the file given with the specified attribute.
 def construct_decision_tree_from_file(filename, target):
     data, attrs = data_from_file(filename)
     return create_decision_tree(data, attrs, target)
@@ -28,7 +28,7 @@ def create_decision_tree(training_data, attributes, target):
 
     else:
         # select the best attribute to split on
-        best, entropy, split_expression = choose_best_attribute(training_data, \
+        best, entropy, split_expression = choose_best_attribute(training_data,\
         [a for a in attributes if a != target], target)
 
         # make a new node
@@ -46,7 +46,8 @@ def create_decision_tree(training_data, attributes, target):
         # split for continous value
             for result in [True, False]:
                 subtree = create_decision_tree(
-                [record for record in training_data if split_expression(record[best]) == result],
+                [record for record in training_data \
+                if split_expression(record[best]) == result],
                 [attr for attr in attributes if attr != best],
                 target)
 
@@ -76,7 +77,8 @@ def choose_best_attribute(data, attributes, target):
             entropies[attr] = entropy(data, attr, target)
             split_expressions[attr] = None
         else:
-            entropies[attr], split_expression = entropy_for_continuous(data, attr, target)
+            entropies[attr], split_expression \
+            = entropy_for_continuous(data, attr, target)
             split_expressions[attr] = split_expression
     # get the lowest entropy
     k = list(entropies.keys())
